@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Replace Single Character</title>
+  <style>
+    html, body {
+      height: 100%;
+      background-color: #222;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .container {
+      text-align: center;
+      border: 2px solid #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    #output {
+      font-size: 40px;
+    }
+
+    .slider-label {
+      margin-top: 10px;
+    }
+
+    .slider {
+      width: 200px;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    .button {
+      background-color: #444;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin-right: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #666;
+    }
+
+    .button:active {
+      transform: scale(0.95);
+    }
+
+    .button:disabled {
+      background-color: #888;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body onload="initialize()">
+  <div class="container">
+    <p id="output">Sa</p>
+    <div class="slider-label">
+      <input type="range" min="100" max="3000" value="1000" step="100" id="slider" onchange="updateInterval()" disabled class="slider">
+    </div>
+    <p id="sliderValue"></p>
+    <div class="buttons">
+      <button onclick="startDisplaying(['Sa', 'Re', 'Ga', 'Ma', 'Pa', 'Dha', 'Ni'])" class="button">Begin</button>
+      <button onclick="stopDisplaying()" class="button">Pause</button>
+    </div>
+  </div>
+  <script>
+    var interval = null;
+    var chars = [];
+
+    function initialize() {
+      updateSliderValue();
+    }
+
+    function startDisplaying(characters) {
+      chars = characters;
+      clearInterval(interval);
+      interval = setInterval(function() {
+        document.getElementById("output").innerHTML = chars[getCurrentIndex()];
+      }, getCurrentInterval());
+
+      // Enable the slider
+      document.getElementById("slider").disabled = false;
+
+      // Update the slider value and display it
+      updateSliderValue();
+    }
+
+    function getCurrentIndex() {
+      shuffleArray(chars);
+      var currentIndex = parseInt(document.getElementById("output").getAttribute("data-index")) || 0;
+      currentIndex = (currentIndex + 1) % chars.length;
+      document.getElementById("output").setAttribute("data-index", currentIndex);
+      return currentIndex;
+    }
+
+    function shuffleArray(array) {
+      var currentIndex = array.length, temporaryValue, randomIndex;
+
+      // While there remain elements to shuffle
+      while (0 !== currentIndex) {
+        // Pick a remaining element
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // Swap it with the current element
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+      }
+
+      return array;
+    }
+
+    function updateInterval() {
+      clearInterval(interval);
+
+      if (interval !== null) {
+        interval = setInterval(function() {
+          document.getElementById("output").innerHTML = chars[getCurrentIndex()];
+        }, getCurrentInterval());
+      }
+
+      // Update the slider value and display it
+      updateSliderValue();
+    }
+
+    function stopDisplaying() {
+      clearInterval(interval);
+      interval = null;
+    }
+
+    function getCurrentInterval() {
+      var sliderValue = document.getElementById("slider").value;
+      return parseInt(sliderValue);
+    }
+
+    function updateSliderValue() {
+      var sliderValue = document.getElementById("slider").value;
+      document.getElementById("sliderValue").innerHTML = "Time in milliseconds: " + sliderValue;
+    }
+  </script>
+</body>
+</html>
